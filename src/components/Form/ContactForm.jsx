@@ -1,98 +1,77 @@
-// import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { Form, Label } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'redux/filterSlice';
+import { getContacts } from 'redux/selectors';
 import { addContact } from 'redux/contactsSlice';
+import { nanoid } from '@reduxjs/toolkit';
 
 export const ContactForm = () => {
-  // const [name, setName] = useState('');
-  // const [number, setNumber] = useState('');
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
   const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
 
-  const isDublicate = ({ name, number }) => {
-    const refName = name.toLowerCase().trim();
-    const refNumber = number.trim();
+  const onChange = e => {
+    const { name, value } = e.target;
 
-    const duplicate = contacts.find(
-      contact =>
-        contact.name.toLowerCase().trim() === refName ||
-        contact.number.trim() === refNumber.trim()
-    );
-    return Boolean(duplicate);
-  };
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
 
-  const onAddContact = ({ name, number }) => {
-    if (isDublicate({ name, number })) {
-      alert(`${name} or ${number} is already in contacts.`);
-      return;
+      case 'number':
+        setNumber(value);
+        break;
+
+      default:
+        return;
     }
-    dispatch(addContact({ name, number }));
   };
 
-  // const onChange = e => {
-  //   const { name, value } = e.target;
-
-  //   switch (name) {
-  //     case 'name':
-  //       setName(value);
-  //       break;
-
-  //     case 'number':
-  //       setNumber(value);
-  //       break;
-
-  //     default:
-  //       return;
-  //   }
-  // };
-
-  // const handleSubmit = e => {
-  //   e.preventDefault();
-  //   onSubmit({ name, number });
-  //   setName('');
-  //   setNumber('');
-  // };
+  const handleSubmit = e => {
+    e.preventDefault();
+    const contact = { id: nanoid(), name, number };
+    if (
+      contacts.find(
+        contact =>
+          contact.name.toLowerCase() === name.toLowerCase() ||
+          contact.number === number
+      )
+    ) {
+      return alert(`${name} or ${number} is already in contacts`);
+    }
+    dispatch(addContact(contact));
+    setName('');
+    setNumber('');
+  };
 
   return (
-    <Form
-      onSubmit={(values, { resetForm }) => {
-        onAddContact({ ...values });
-        resetForm();
-      }}
-    >
+    <Form onSubmit={handleSubmit}>
       <Label>
         Name
         <input
-          // value={name}
+          value={name}
           type="text"
           name="name"
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
-          // onChange={onChange}
+          onChange={onChange}
         />
       </Label>
       <Label>
         Number
         <input
-          // value={number}
+          value={number}
           type="tel"
           name="number"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
-          // onChange={onChange}
+          onChange={onChange}
         />
       </Label>
-      <button type="submit" onClick={() => dispatch({ type: 'addContact' })}>
-        Add contact
-      </button>
+      <button type="submit">Add contact</button>
     </Form>
   );
-};
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };

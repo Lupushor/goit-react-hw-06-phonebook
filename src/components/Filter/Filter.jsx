@@ -1,20 +1,17 @@
-// import PropTypes from 'prop-types';
 import { Form, Label } from 'components/Form/ContactForm.styled';
 import { Input } from './Filter.styled';
 import { useSelector, useDispatch } from 'react-redux';
-import { getFilter, getFilterContacts } from 'redux/filterSlice';
-import { selectFilter } from 'redux/selectors';
+import { getFilter } from 'redux/selectors';
+import { setFilter } from 'redux/filterSlice';
 
 export const Filter = () => {
-  const filter = useSelector(getFilterContacts);
-  // const filter = useSelector(getFilter);
+  const filter = useSelector(getFilter);
   const dispatch = useDispatch();
 
   const onFilter = e => {
-    dispatch(selectFilter(e.target.value.trim()));
+    dispatch(setFilter(e.target.value.trim()));
   };
 
-  // export const Filter = ({ filter, onChange }) => {
   return (
     <Form>
       <Label>
@@ -24,8 +21,3 @@ export const Filter = () => {
     </Form>
   );
 };
-
-// Filter.propTypes = {
-//   filter: PropTypes.string.isRequired,
-//   onChange: PropTypes.func.isRequired,
-// };

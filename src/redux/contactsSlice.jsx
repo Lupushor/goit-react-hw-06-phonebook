@@ -1,52 +1,31 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
-import initialContacts from 'components/contactsData';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { createSlice } from '@reduxjs/toolkit';
+
+const initialContacts = {
+  items: [
+    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+    { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+    { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+  ],
+};
 
 const contactsSlice = createSlice({
+  // Ім'я слайсу
   name: 'contacts',
+  // Початковий стан редюсера слайсу
   initialState: initialContacts,
+  // Об'єкт редюсерів
   reducers: {
-    addContact: {
-      reducer(state, action) {
-        state.push(action.payload);
-      },
-      prepare(text) {
-        return { payload: { id: nanoid(), ...text } };
-      },
+    addContact(state, action) {
+      state.items.push(action.payload);
     },
     deleteContact(state, action) {
-      return state.filter(contact => contact.id !== action.payload);
+      state.items = state.items.filter(item => item.id !== action.payload);
     },
   },
 });
 
+// Генератори екшенів
 export const { addContact, deleteContact } = contactsSlice.actions;
-const persistConfig = { key: 'root', storage };
-export const contactsReducer = persistReducer(
-  persistConfig,
-  contactsSlice.reducer
-);
-
-// const contactsSlice = createSlice({
-//   // Имя слайса
-//   name: 'contacts',
-//   // Начальное состояние редюсера слайса
-//   initialState: { contacts: [] },
-//   // Объект редюсеров
-//   reducers: {
-//     addContact(state, action) {
-//       state.contacts.push(action.payload);
-//     },
-//     deleteContact(state, action) {
-//       state.contacts = state.contacts.filter(
-//         contact => contact.id !== action.payload
-//       );
-//     },
-//   },
-// });
-
-// // Генераторы экшенов
-// const { addContact, deleteContact } = contactsSlice.actions;
-// // Редюсер слайса
-// const contactsReducer = contactsSlice.reducer;
+// Редюсер слайсу
+export const contactsReducer = contactsSlice.reducer;

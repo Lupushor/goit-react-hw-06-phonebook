@@ -1,13 +1,19 @@
-export const getContacts = ({ contacts: { contacts } }) => contacts;
-export const getFilter = ({ filter }) => filter;
+import { createSlice } from '@reduxjs/toolkit';
 
-export const getFilterContacts = ({ contacts: { contacts }, filter }) => {
-  if (!filter) {
-    return contacts;
-  }
-  return contacts.filter(
-    ({ name, number }) =>
-      name.toLowerCase().includes(filter.toLowerCase()) ||
-      number.includes(filter)
-  );
-};
+const filterSlice = createSlice({
+  // Ім'я слайсу
+  name: 'filter',
+  // Початковий стан редюсера слайсу
+  initialState: '',
+  // Об'єкт редюсерів
+  reducers: {
+    setFilter(state, action) {
+      return action.payload;
+    },
+  },
+});
+
+// Генератори екшенів
+export const { setFilter } = filterSlice.actions;
+// Редюсер слайсу
+export const filterReducer = filterSlice.reducer;
